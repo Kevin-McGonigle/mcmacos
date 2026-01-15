@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Minimal bootstrap for macOS.
+
+echo "Starting macOS bootstrap..."
+
+# Ask for sudo upfront to cache credentials
+if [ "$(id -u)" -ne 0 ]; then
+  sudo -v || true
+fi
+
+# Ensure Command Line Tools (interactive install is fine)
+if ! xcode-select -p >/dev/null 2>&1; then
+  echo "Command Line Tools not found — installing (this will prompt a GUI)."
+  if ! xcode-select --install 2>/dev/null; then
+    echo "xcode-select --install returned non-zero. If you cancelled or it failed, please run 'xcode-select --install' manually and re-run this script."
+  fi
+else
+  echo "Command Line Tools already installed."
+fi
+
+# Install Homebrew if missing
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Installing Homebrew..."
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  # Make brew available in this shell (supports Apple Silicon and Intel paths)
+  echo >> ~/.zprofile
+  if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+  elif [ -x /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+    echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile
+  fi
+else
+  echo "Homebrew already installed: $(brew --version | head -n1)"
+  read -r -p "Run 'brew update && brew upgrade && brew cleanup'? [y/N] " reply
+  if [[ $reply =~ ^[Yy]$ ]]; then
+    echo "Updating Homebrew and upgrading packages..."
+    brew update
+    brew upgrade
+    brew cleanup
+  else
+    echo "Skipping Homebrew update/upgrade."
+  fi
+fi
+
+# Ensure git is available (install via Homebrew if needed)
+if ! command -v git >/dev/null 2>&1; then
+  echo "git not found — installing via Homebrew..."
+  brew install git
+else
+  echo "git present: $(git --version)"
+fi
+
+# Copy repository .gitconfig to the user's home directory if present.
+# Prompt before overwriting an existing ~/.gitconfig.
+REPO_GITCONFIG="$(pwd)/.gitconfig"
+if [ -f "$REPO_GITCONFIG" ]; then
+  if [ -f "$HOME/.gitconfig" ]; then
+    read -r -p "~/.gitconfig exists — overwrite with repo .gitconfig? [y/N] " overwrite_reply
+    if [[ $overwrite_reply =~ ^[Yy]$ ]]; then
+      cp "$REPO_GITCONFIG" "$HOME/.gitconfig"
+      echo "Copied .gitconfig to $HOME/.gitconfig"
+    else
+      echo "Leaving existing ~/.gitconfig in place."
+    fi
+  else
+    cp "$REPO_GITCONFIG" "$HOME/.gitconfig"
+    echo "Copied .gitconfig to $HOME/.gitconfig"
+  fi
+else
+  echo "No .gitconfig in repository to copy."
+fi
+
+# Run Brewfile if present in repo root
+if [ -f "$(pwd)/Brewfile" ]; then
+  echo "Found Brewfile in $(pwd). Running brew bundle..."
+  brew bundle --file="$(pwd)/Brewfile"
+else
+  echo "No Brewfile found in $(pwd). Create one to automate app installs."
+fi
+
+echo "Bootstrap complete."
