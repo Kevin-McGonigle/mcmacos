@@ -15,18 +15,15 @@ A collection of tools, scripts and configuration files for setting up a MacOS de
 2. Run the bootstrap script:
 
 ```bash
-./bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/Kevin-McGonigle/mcmacos/main/bootstrap.sh | bash
 ```
 
 ## File Reference
 
 ### bootstrap.sh
 
-A script to set up a new MacOS device, configuring device setting and ensuring essential tools and packages are installed and configured.
+A script to set up a new MacOS device, configuring device settings and ensuring essential tools and packages are installed and configured.
 
 ### .gitconfig
-A Git configuration file with user details and preferred settings.
 
-### Brewfile
-
-A simple list of Homebrew formulae and casks for essential tools and apps — apply with `brew bundle` (run automatically by the bootstrap script).
+Git configuration file with user details and preferred settings.
