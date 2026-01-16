@@ -2,6 +2,7 @@
 
 # Formulae
 brew "gh"
+brew "uv"
 
 # Casks
 cask "warp"
