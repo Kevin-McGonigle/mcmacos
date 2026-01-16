@@ -54,24 +54,31 @@ else
   echo "git present: $(git --version)"
 fi
 
-# Copy repository .gitconfig to the user's home directory if present.
-# Prompt before overwriting an existing $HOME/.gitconfig.
-REPO_GITCONFIG="$(pwd)/.gitconfig"
-if [ -f "$REPO_GITCONFIG" ]; then
-  if [ -f "$HOME/.gitconfig" ]; then
-    read -r -p "$HOME/.gitconfig exists — overwrite with repo .gitconfig? [y/N] " overwrite_reply
-    if [[ $overwrite_reply =~ ^[Yy]$ ]]; then
-      cp "$REPO_GITCONFIG" "$HOME/.gitconfig"
-      echo "Copied .gitconfig to $HOME/.gitconfig"
-    else
-      echo "Leaving existing $HOME/.gitconfig in place."
-    fi
-  else
-    cp "$REPO_GITCONFIG" "$HOME/.gitconfig"
-    echo "Copied .gitconfig to $HOME/.gitconfig"
+## Create a ~/.gitconfig from environment or prompt (standalone behavior)
+if [ -f "$HOME/.gitconfig" ]; then
+  read -r -p "$HOME/.gitconfig exists — overwrite? [y/N] " overwrite_reply
+  if [[ ! $overwrite_reply =~ ^[Yy]$ ]]; then
+    echo "Keeping existing $HOME/.gitconfig"
+    GITCONFIG_SKIP=1
   fi
-else
-  echo "No .gitconfig in repository to copy."
+fi
+
+if [ -z "${GITCONFIG_SKIP:-}" ]; then
+  if [ -n "${GIT_NAME:-}" ] && [ -n "${GIT_EMAIL:-}" ]; then
+    name="$GIT_NAME"
+    email="$GIT_EMAIL"
+  else
+    read -r -p "Git user.name: " name
+    read -r -p "Git user.email: " email
+  fi
+
+  cat > "$HOME/.gitconfig" <<EOF
+[user]
+  name = $name
+  email = $email
+EOF
+
+  echo "Wrote $HOME/.gitconfig"
 fi
 
 # Install required apps inline
