@@ -74,12 +74,13 @@ else
   echo "No .gitconfig in repository to copy."
 fi
 
-# Run Brewfile if present in repo root
-if [ -f "$(pwd)/Brewfile" ]; then
-  echo "Found Brewfile in $(pwd). Running brew bundle..."
-  brew bundle --file="$(pwd)/Brewfile"
+# Install required apps inline
+if command -v brew >/dev/null 2>&1; then
+  echo "Installing required packages: gh, uv, warp..."
+  brew install gh uv || true
+  brew install --cask --no-quarantine warp || true
 else
-  echo "No Brewfile found in $(pwd). Create one to automate app installs."
+  echo "Homebrew not found; skipping package installs."
 fi
 
 ## Install nvm (Node Version Manager) from latest release using `gh` when available.
