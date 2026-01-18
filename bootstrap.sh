@@ -91,14 +91,22 @@ fi
 
 # Install tools via Homebrew
 if command -v brew >/dev/null 2>&1; then
-  echo "Installing Homebrew formulae: gh, uv..."
-  brew install gh uv || true
+  echo "Installing Homebrew formulae: gh, oh-my-posh, uv..."
+  brew install gh jandedobbeleer/oh-my-posh/oh-my-posh uv || true
   
   echo "Installing Homebrew casks: claude-code, warp..."
   brew install --cask claude-code || true
   brew install --cask warp || true
 else
   echo "Homebrew not found; skipping package installs."
+fi
+
+# Install Fira Code Nerd Font
+if command -v oh-my-posh >/dev/null 2>&1; then
+  echo "Installing Fira Code Nerd Font..."
+  oh-my-posh font install FiraCode
+else
+  echo "Oh My Posh not found; skipping Fira Code Nerd Font install"
 fi
 
 # Install nvm (Node Version Manager)

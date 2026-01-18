@@ -2,13 +2,13 @@
 
 A collection of tools, scripts and configuration files for setting up a macOS device so that it doesn't suck.
 
-## Essential Applications
+## Essential applications
 
 - [Google Chrome](https://www.google.com/intl/en_uk/chrome/)
 - [Raycast](https://www.raycast.com/)
 - [Visual Studio Code](https://code.visualstudio.com/)
 
-## Quick Start
+## Quick start
 
 1. Manually install the applications above.
 
@@ -31,6 +31,8 @@ curl -fsSL https://raw.githubusercontent.com/Kevin-McGonigle/mcmacos/main/bootst
     - `@google/gemini-cli`
     - `pnpm`
   - [UV](https://docs.astral.sh/uv/) with the latest Python, plus `ruff`.
+  - [oh-my-posh](https://ohmyposh.dev/).
+  - [Fira Code](https://github.com/tonsky/FiraCode) Nerd Font.
 - Configures macOS system settings:
   - Appearance (Dark Mode)
   - Dock (size, auto-hide, etc.) and Hot Corners
