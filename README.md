@@ -1,6 +1,6 @@
 # mcmacos
 
-A collection of tools, scripts and configuration files for setting up a MacOS device so that it doesn't suck.
+A collection of tools, scripts and configuration files for setting up a macOS device so that it doesn't suck.
 
 ## Essential Applications
 
@@ -19,12 +19,21 @@ curl -fsSL https://raw.githubusercontent.com/Kevin-McGonigle/mcmacos/main/bootst
 ```
 
 ## What does it do?
-- Installs [Xcode Command Line Tools](https://developer.apple.com/documentation/xcode/installing-the-command-line-tools/)
-- Installs [Homebrew](https://brew.sh/)
-- Congigures [Git](https://git-scm.com/)
-- Installs [Claude Code](https://code.claude.com/)
-- Installs [Gemini CLI](https://geminicli.com/)
-- Installs [GitHub CLI](https://cli.github.com/)
-- Installs [Warp](https://warp.dev/)
-- Installs [NVM](https://github.com/nvm-sh/nvm) and the latest LTS version of Node.js
-- Installs [UV](https://docs.astral.sh/uv/) and the latest version of Python
+- Installs [Xcode Command Line Tools](https://developer.apple.com/documentation/xcode/installing-the-command-line-tools/).
+- Installs [Homebrew](https://brew.sh/) to manage packages.
+- Installs and configures essential development tools:
+  - [Git](https://git-scm.com/)
+  - [Claude Code](https://code.claude.com/)
+  - [Gemini CLI](https://geminicli.com/)
+  - [GitHub CLI](https://cli.github.com/)
+  - [Warp](https://warp.dev/)
+  - [NVM](https://github.com/nvm-sh/nvm) with the latest LTS Node.js, plus global packages:
+    - `@google/gemini-cli`
+    - `pnpm`
+  - [UV](https://docs.astral.sh/uv/) with the latest Python, plus `ruff`.
+- Configures macOS system settings:
+  - Appearance (Dark Mode)
+  - Dock (size, auto-hide, etc.) and Hot Corners
+  - Menu Bar (icons, clock with seconds, battery percentage)
+  - Keyboard shortcuts (disables Spotlight, Globe/Fn key)
+  - Trackpad & Mouse (tracking speed, tap-to-click, etc.)
