@@ -10,7 +10,7 @@ if [ "$(id -u)" -ne 0 ]; then
   sudo -v || true
 fi
 
-# Ensure Command Line Tools (interactive install is fine)
+# Ensure Command Line Tools are installed (interactive install is fine)
 if ! xcode-select -p >/dev/null 2>&1; then
   echo "Command Line Tools not found — installing (this will prompt a GUI)."
   if ! xcode-select --install 2>/dev/null; then
@@ -81,11 +81,14 @@ EOF
   echo "Wrote $HOME/.gitconfig"
 fi
 
-# Install required apps inline
+# Install tools via Homebrew
 if command -v brew >/dev/null 2>&1; then
-  echo "Installing required packages: gh, uv, warp..."
+  echo "Installing Homebrew formulae: gh, uv..."
   brew install gh uv || true
-  brew install --cask --no-quarantine warp || true
+  
+  echo "Installing Homebrew casks: claude-code, warp..."
+  brew install --cask claude-code || true
+  brew install --cask warp || true
 else
   echo "Homebrew not found; skipping package installs."
 fi
@@ -119,11 +122,20 @@ else
   echo "nvm not found; skipping Node.js installation."
 fi
 
+# Install global npm packages
+if command -v npm >/dev/null 2>&1; then
+  echo "Installing global npm packages: @google/gemini-cli, pnpm..."
+  npm install -g @google/gemini-cli pnpm
+else
+  echo "npm not found; skipping global npm package installation."
+fi
+
 # Install latest Python via uv
 if command -v uv >/dev/null 2>&1; then
   echo "Installing latest Python via uv..."
   uv python install --default
   uv python update-shell
+  uv tool install ruff
 else
   echo "uv not found; skipping Python installation."
 fi
