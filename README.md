@@ -19,6 +19,7 @@ curl -fsSL https://raw.githubusercontent.com/Kevin-McGonigle/mcmacos/main/bootst
 ```
 
 ## What does it do?
+
 - Installs [Xcode Command Line Tools](https://developer.apple.com/documentation/xcode/installing-the-command-line-tools/).
 - Installs [Homebrew](https://brew.sh/) to manage packages.
 - Installs and configures essential development tools:
@@ -27,12 +28,17 @@ curl -fsSL https://raw.githubusercontent.com/Kevin-McGonigle/mcmacos/main/bootst
   - [Gemini CLI](https://geminicli.com/)
   - [GitHub CLI](https://cli.github.com/)
   - [Warp](https://warp.dev/)
+  - [Bun](https://bun.com/)
   - [NVM](https://github.com/nvm-sh/nvm) with the latest LTS Node.js, plus global packages:
     - `@google/gemini-cli`
     - `pnpm`
   - [UV](https://docs.astral.sh/uv/) with the latest Python, plus `ruff`.
-  - [oh-my-posh](https://ohmyposh.dev/).
-  - [Fira Code](https://github.com/tonsky/FiraCode) Nerd Font.
+- Configures zsh with [oh-my-posh](https://ohmyposh.dev/), [Fira Code](https://github.com/tonsky/FiraCode) Nerd Font, and plugins including:
+  - `git`
+  - `fzf`
+  - `zsh-autosuggestions`
+  - `zsh-fast-syntax-highlighting`
+  - `zsh-history-substring-search`
 - Configures macOS system settings:
   - Appearance (Dark Mode)
   - Dock (size, auto-hide, etc.) and Hot Corners

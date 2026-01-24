@@ -50,6 +50,18 @@ else
   fi
 fi
 
+# Install formulae and casks
+if command -v brew >/dev/null 2>&1; then
+  echo "Installing Homebrew formulae: gh, oh-my-posh, uv..."
+  brew install gh jandedobbeleer/oh-my-posh/oh-my-posh oven-sh/bun/bun uv || true
+  
+  echo "Installing Homebrew casks: claude-code, warp..."
+  brew install --cask claude-code || true
+  brew install --cask warp || true
+else
+  echo "Homebrew not found; skipping package installs."
+fi
+
 # --- Git ---
 
 # Ensure git is available
@@ -87,18 +99,14 @@ EOF
   echo "Wrote $HOME/.gitconfig"
 fi
 
-# --- Development Tools ---
+# --- Shell ---
 
-# Install tools via Homebrew
-if command -v brew >/dev/null 2>&1; then
-  echo "Installing Homebrew formulae: gh, oh-my-posh, uv..."
-  brew install gh jandedobbeleer/oh-my-posh/oh-my-posh uv || true
-  
-  echo "Installing Homebrew casks: claude-code, warp..."
-  brew install --cask claude-code || true
-  brew install --cask warp || true
+# Set Zsh as default shell
+if [ "$(basename "$SHELL")" != "zsh" ]; then
+  echo "Setting Zsh as default shell..."
+  chsh -s "$(which zsh)"
 else
-  echo "Homebrew not found; skipping package installs."
+  echo "Zsh is already the default shell."
 fi
 
 # Install Fira Code Nerd Font
@@ -125,6 +133,66 @@ if command -v oh-my-posh >/dev/null 2>&1; then
 else
   echo "oh-my-posh not found, skipping Zsh configuration."
 fi
+
+echo "Configuring Zsh plugins..."
+
+# Install zsh plugins
+brew install fzf zsh-autosuggestions zsh-fast-syntax-highlighting zsh-history-substring-search
+
+# Source plugins in .zshrc
+ZSHRC="$HOME/.zshrc"
+touch "$ZSHRC" # Ensure the file exists
+
+# Git plugin (native)
+if grep -q "plugins=(.*)" "$ZSHRC"; then
+  # if plugins array exists, add git if it's not already there
+  if ! grep -q "plugins=([^)]*git[^)]*)" "$ZSHRC"; then
+    sed -i '' 's/plugins=(/plugins=(git /' "$ZSHRC"
+    echo "Added 'git' to Zsh plugins in $ZSHRC."
+  else
+    echo "'git' plugin already present in $ZSHRC."
+  fi
+else
+  # if no plugins array, add it with git
+  echo -e "\n# Zsh plugins" >> "$ZSHRC"
+  echo "plugins=(git)" >> "$ZSHRC"
+  echo "Added 'git' to Zsh plugins in $ZSHRC."
+fi
+
+# zsh-autosuggestions
+if ! grep -q "zsh-autosuggestions.zsh" "$ZSHRC"; then
+  echo "source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" >> "$ZSHRC"
+  echo "Added zsh-autosuggestions to $ZSHRC."
+else
+  echo "zsh-autosuggestions already configured in $ZSHRC."
+fi
+
+# zsh-fast-syntax-highlighting
+if ! grep -q "fast-syntax-highlighting.plugin.zsh" "$ZSHRC"; then
+  echo "source $(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" >> "$ZSHRC"
+  echo "Added zsh-fast-syntax-highlighting to $ZSHRC."
+else
+  echo "zsh-fast-syntax-highlighting already configured in $ZSHRC."
+fi
+
+# zsh-history-substring-search
+if ! grep -q "zsh-history-substring-search.zsh" "$ZSHRC"; then
+  echo "source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh" >> "$ZSHRC"
+  echo 'bindkey "$terminfo[kcuu1]" history-substring-search-up' >> "$ZSHRC"
+  echo 'bindkey "$terminfo[kcud1]" history-substring-search-down' >> "$ZSHRC"
+else
+  echo "zsh-history-substring-search already configured in $ZSHRC."
+fi
+
+# fzf
+if ! grep -q "fzf --zsh" "$ZSHRC"; then
+    echo "source <(fzf --zsh)" >> "$ZSHRC"
+    echo "Added fzf to $ZSHRC."
+else
+    echo "fzf already configured in $ZSHRC."
+fi
+
+# --- Development Tools ---
 
 # Install nvm (Node Version Manager)
 if command -v gh >/dev/null 2>&1; then
@@ -155,8 +223,21 @@ fi
 
 # Install global npm packages
 if command -v npm >/dev/null 2>&1; then
-  echo "Installing global npm packages: @google/gemini-cli, pnpm..."
-  npm install -g @google/gemini-cli pnpm
+  echo "Checking global npm packages..."
+  
+  if ! command -v gemini >/dev/null 2>&1; then
+    echo "Installing @google/gemini-cli..."
+    npm install -g @google/gemini-cli
+  else
+    echo "@google/gemini-cli is already installed."
+  fi
+
+  if ! command -v pnpm >/dev/null 2>&1; then
+    echo "Installing pnpm..."
+    npm install -g pnpm
+  else
+    echo "pnpm is already installed."
+  fi
 else
   echo "npm not found; skipping global npm package installation."
 fi
@@ -178,7 +259,7 @@ echo "Configuring macOS settings..."
 # Appearance
 defaults write NSGlobalDomain AppleInterfaceStyle -string "Dark"
 
-# Dock, Dashboard, and Hot Corners
+# Dock
 defaults write com.apple.dock tilesize -int 36
 defaults write com.apple.dock magnification -bool true
 defaults write com.apple.dock largesize -int 72
@@ -192,6 +273,7 @@ else
   echo "Keeping existing Dock applications."
 fi
 
+# Hot Corners
 defaults write com.apple.dock wvous-tl-corner -int 1
 defaults write com.apple.dock wvous-tr-corner -int 1
 defaults write com.apple.dock wvous-bl-corner -int 1
