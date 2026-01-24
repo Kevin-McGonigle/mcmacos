@@ -1,6 +1,6 @@
 # mcmacos
 
-A collection of tools, scripts and configuration files for setting up a macOS device so that it doesn't suck.
+A comprehensive bootstrap script for setting up a macOS device so that it doesn't suck.
 
 ## Essential applications
 
