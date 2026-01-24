@@ -109,6 +109,23 @@ else
   echo "Oh My Posh not found; skipping Fira Code Nerd Font install"
 fi
 
+# Configure oh-my-posh for Zsh
+if command -v oh-my-posh >/dev/null 2>&1; then
+  echo "Configuring oh-my-posh for Zsh..."
+  OMP_LINE='eval "$(oh-my-posh init zsh --config 'dracula')"'
+  ZSHRC="$HOME/.zshrc"
+  touch "$ZSHRC" # Ensure the file exists
+  if ! grep -q "oh-my-posh init" "$ZSHRC"; then
+    echo "Adding oh-my-posh init to $ZSHRC."
+    echo -e "\n# Initialize Oh My Posh" >> "$ZSHRC"
+    echo "$OMP_LINE" >> "$ZSHRC"
+  else
+    echo "oh-my-posh already configured in $ZSHRC."
+  fi
+else
+  echo "oh-my-posh not found, skipping Zsh configuration."
+fi
+
 # Install nvm (Node Version Manager)
 if command -v gh >/dev/null 2>&1; then
   NVM_TAG=$(gh api repos/nvm-sh/nvm/releases/latest --jq .tag_name 2>/dev/null || true)
@@ -225,3 +242,5 @@ killall Dock
 killall SystemUIServer
 
 echo "Bootstrap complete."
+
+exec zsh
