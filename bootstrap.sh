@@ -178,8 +178,8 @@ fi
 # zsh-history-substring-search
 if ! grep -q "zsh-history-substring-search.zsh" "$ZSHRC"; then
   echo "source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh" >> "$ZSHRC"
-  echo 'bindkey "$terminfo[kcuu1]" history-substring-search-up' >> "$ZSHRC"
-  echo 'bindkey "$terminfo[kcud1]" history-substring-search-down' >> "$ZSHRC"
+  echo "bindkey '^[[A' history-substring-search-up" >> "$ZSHRC"
+  echo "bindkey '^[[B' history-substring-search-down" >> "$ZSHRC"
 else
   echo "zsh-history-substring-search already configured in $ZSHRC."
 fi
